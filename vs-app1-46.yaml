@@ -1,0 +1,85 @@
+---
+- hosts: "localhost"
+  connection: "local"
+  collections:
+    - vmware.alb
+  tasks:
+    - name: defining avi config
+      set_fact:
+        avi_role_config_log_mode: 'false'
+        avi_config:          
+          virtualservice:
+            - name: app1-46
+              active_standby_se_tag: ACTIVE_STANDBY_SE_1
+              advertise_down_vs: false
+              allow_invalid_client_cert: false
+              analytics_policy:
+                all_headers: true
+                client_insights: NO_INSIGHTS
+                full_client_logs:
+                  duration: 0
+                  enabled: true
+                  throttle: 10
+                learning_log_policy:
+                  enabled: true
+                metrics_realtime_update:
+                  duration: 0
+                  enabled: true
+                significant_log_throttle: 10
+                udf_log_throttle: 10
+              analytics_profile_ref: https://localhost/api/analyticsprofile/analyticsprofile-a1fcb478-7f51-47bc-8538-f729c1db96fb
+              application_profile_ref: https://localhost/api/applicationprofile/applicationprofile-f0f1f1fe-b9ec-4757-a492-fe155bdcc869
+              bulk_sync_kvcache: false
+              close_client_conn_on_config_update: false
+              cloud_ref: https://localhost/api/cloud/cloud-49bebaa4-e9c1-4c16-ab33-73e67acb5620
+              cloud_type: CLOUD_VCENTER
+              content_rewrite:
+                rewritable_content_ref: https://localhost/api/stringgroup/stringgroup-4fe37020-5dee-4cd7-83d5-79d1b181bf48
+              delay_fairness: false
+              east_west_placement: false
+              enable_autogw: true
+              enabled: true
+              error_page_profile_ref: https://localhost/api/errorpageprofile/errorpageprofile-65bfdf6b-99a5-4238-9e00-9c56b3460259
+              flow_dist: LOAD_AWARE
+              flow_label_type: NO_LABEL
+              http_policies:
+              - http_policy_set_ref: https://localhost/api/httppolicyset/httppolicyset-fa1a5425-8ba3-4601-9802-bf9ac602e130
+                index: 11
+              ign_pool_net_reach: false
+              limit_doser: false
+              max_cps_per_client: 0
+              network_profile_ref: https://localhost/api/networkprofile/networkprofile-2659050a-cdbf-477b-9c7d-1d733408c607
+              network_security_policy_ref: https://localhost/api/networksecuritypolicy/networksecuritypolicy-7b9a7230-51e8-4044-8996-69a49611b3c4
+              pool_ref: https://localhost/api/pool/pool-74e057e6-41f8-46e3-8a71-8c4312ff7657
+              remove_listening_port_on_vs_down: false
+              scaleout_ecmp: false
+              se_group_ref: https://localhost/api/serviceenginegroup/serviceenginegroup-ba549598-7b59-4cb4-a9b8-27154de5efb9
+              services:
+              - enable_http2: false
+                enable_ssl: true
+                horizon_internal_ports: false
+                is_active_ftp_data_port: false
+                port: 443
+                port_range_end: 443
+              sideband_profile:
+                sideband_max_request_body_size: 1024
+              ssl_key_and_certificate_refs:
+              - https://localhost/api/sslkeyandcertificate/sslkeyandcertificate-4fbdf11e-c0ad-4bd2-a86e-9d90c07e9d29
+              ssl_profile_ref: https://localhost/api/sslprofile/sslprofile-f3e5731c-9413-490b-a83d-0239b9cecf44
+              ssl_sess_cache_avg_size: 1024
+              tenant_ref: https://localhost/api/tenant/admin
+              traffic_enabled: true
+              type: VS_TYPE_NORMAL
+              use_bridge_ip_as_vip: false
+              use_vip_as_snat: false
+              uuid: virtualservice-a2503337-7b05-48c8-9a6b-8171545fe6c2
+              vh_type: VS_TYPE_VH_SNI
+              vrf_context_ref: https://localhost/api/vrfcontext/vrfcontext-cb3a6905-9263-4493-b47c-c035be28c765
+              vsvip_ref: https://localhost/api/vsvip/vsvip-20389ad1-7238-4632-94ea-8dd276a60961
+              weight: 1
+    - name: Avi Application | Setup
+      import_role:
+        name: aviconfig
+      vars:
+        avi_config: "{{avi_config}}"
+        avi_creds_file: "c46.yaml"
