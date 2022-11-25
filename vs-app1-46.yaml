@@ -1,4 +1,4 @@
---- t3
+--- t4
 - hosts: "localhost"
   connection: "local"
   collections:
